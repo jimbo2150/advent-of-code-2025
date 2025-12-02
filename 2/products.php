@@ -3,9 +3,9 @@
 $input_file = __DIR__ . '/input.csv';
 $file_handle = fopen($input_file, 'r');
 
-$valid_ids = 0;
-$invalid_ids = 0;
-$invalid_sum = 0;
+$p1_valid_ids = 0;
+$p1_invalid_ids = 0;
+$p1_invalid_sum = 0;
 
 function is_valid(string $value) {
 	$len = strlen($value);
@@ -31,15 +31,15 @@ while (($row = fgetcsv($file_handle, null, ",")) !== FALSE) {
 			$value = ltrim($value, '0');
 			// Check validity
 			if(is_valid($value)) {
-				$valid_ids += 1;
+				$p1_valid_ids += 1;
 				continue;
 			}
-			$invalid_ids += 1;
-			$invalid_sum += intval($value);
+			$p1_invalid_ids += 1;
+			$p1_invalid_sum += intval($value);
 		}
 	}
 }
 
-echo 'Valid ids: ', $valid_ids, PHP_EOL;
-echo 'Invalid ids: ', $invalid_ids, PHP_EOL;
-echo 'Invalid sum: ', $invalid_sum, PHP_EOL;
+echo 'Part 1: Valid ids: ', $p1_valid_ids, PHP_EOL;
+echo 'Part 1: Invalid ids: ', $p1_invalid_ids, PHP_EOL;
+echo 'Part 1: Invalid sum: ', $p1_invalid_sum, PHP_EOL;
