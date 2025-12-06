@@ -78,3 +78,27 @@ function print_grid_buffer(array $grid_buffer): void {
 		echo implode('', $line), PHP_EOL;
 	}
 }
+
+function p2_check_and_update_at_position(array &$grid_buffer, int $grid_pos_x, int $grid_pos_y, int &$total_rolls_removed): void {
+	$contents = $grid_buffer[$grid_pos_y][$grid_pos_x] ?? null;
+	if(false == in_array($contents, ['@', 'x'])) {
+		return;
+	}
+	$mini_grid = (function() use ($grid_buffer, $grid_pos_x, $grid_pos_y): array {
+		$grid = [];
+		foreach(range($grid_pos_y - 1, $grid_pos_y + 1) as $row_idx => $row) {
+			foreach(range($grid_pos_x - 1, $grid_pos_x + 1) as $col_idx => $col) {
+				if(!isset($grid_buffer[$row][$col])) {
+					$grid[$row_idx][$col_idx] = '.';
+					continue;
+				}
+				$grid[$row_idx][$col_idx] = $grid_buffer[$row][$col];
+			}
+		}
+		return $grid;
+	})();
+	if(check_individual_roll($mini_grid, 1, 1)) {
+		$total_rolls_removed += 1;
+		$grid_buffer[$grid_pos_y][$grid_pos_x] = '~';
+	}
+}

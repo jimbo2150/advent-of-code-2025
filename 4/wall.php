@@ -2,10 +2,8 @@
 
 require_once dirname(__DIR__) . '/bootstrap.php';
 
-$input_file = __DIR__ . '/input.txt';
-$output_file = __DIR__ . '/output.txt';
+$input_file = __DIR__ . '/data/input.txt';
 $GLOBALS['input_file'] = fopen($input_file, 'r');
-$GLOBALS['output_file'] = fopen($output_file, 'w');
 
 // Buffer the number of spaces on each size plus the current side
 const BUFFER_ROW_SIZE = 3;

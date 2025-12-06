@@ -2,6 +2,9 @@
 
 require_once __DIR__ . '/shared.php';
 
+$output_file = __DIR__ . '/../data/output.txt';
+$GLOBALS['output_file'] = fopen($output_file, 'w');
+
 $grid_buffer = [];
 
 $grid_pos = ['x' => 0, 'y' => 0];
@@ -22,6 +25,8 @@ $loop_column = function() use (&$grid_buffer, &$grid_pos, &$total_rolls_accessib
 };
 
 $loop = 0;
+
+rewind($GLOBALS['input_file']);
 
 while (advance_buffer($grid_buffer, $GLOBALS['input_file']) && count($grid_buffer) > 0) {
 	if(isset($grid_buffer[$grid_pos['y']])) {
