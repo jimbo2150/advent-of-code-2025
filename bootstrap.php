@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/src/shared.php';
+
 function get_cpu_count_from_proc(): int {
     $cpu_count = 0;
     $cpuinfo_path = '/proc/cpuinfo';
