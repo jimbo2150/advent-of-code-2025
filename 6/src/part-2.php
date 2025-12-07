@@ -3,43 +3,63 @@
 require_once __DIR__ . '/shared.php';
 
 $input_file_path = __DIR__ . '/../data/input.txt';
-$GLOBALS['input_file'] = fopen($input_file_path, 'r');
+$lines = file($input_file_path, FILE_IGNORE_NEW_LINES);
+$height = count($lines);
+$width = max(array_map('strlen', $lines));
 
-$problems = [];
+$grid = [];
+foreach($lines as $row => $line) {
+	$grid[$row] = str_split(str_pad($line, $width, ' '));
+}
 
-while(($row = fgets($GLOBALS['input_file'])) !== false) {
-	$row = preg_split('/\s+/', trim($row));
-	foreach($row as $idx => $problem) {
-		if(is_numeric($problem)) {
-			$problems[$idx] = $problems[$idx] ?? [
-				'total' => 0,
-				'stack' => [],
-				'rtl_stack' => [],
-				'stack_width' => 0,
-				'operation' => null
-			];
-			$problems[$idx]['stack'][] = $value = intval($problem);
-			$problems[$idx]['stack_width'] = max($problems[$idx]['stack_width'], strlen($value));
-		} else {
-			// Operation
-			$problems[$idx]['operation'] = Operation::tryFrom($problem);
+$separators = [];
+for($col = 0; $col < $width; $col++) {
+	$is_sep = true;
+	for($row = 0; $row < $height; $row++) {
+		if($grid[$row][$col] !== ' ') {
+			$is_sep = false;
+			break;
 		}
 	}
+	if($is_sep) $separators[] = $col;
+}
+
+$problems = [];
+$start = 0;
+foreach($separators as $sep) {
+	if($sep > $start) {
+		$problems[] = ['start' => $start, 'end' => $sep - 1];
+	}
+	$start = $sep + 1;
+}
+if($start < $width) {
+	$problems[] = ['start' => $start, 'end' => $width - 1];
+}
+
+$parsed_problems = [];
+foreach($problems as $p) {
+	$numbers = [];
+	for($col = $p['start']; $col <= $p['end']; $col++) {
+		$digits = '';
+		for($row = 0; $row < $height - 1; $row++) {
+			$char = $grid[$row][$col];
+			if($char !== ' ') $digits .= $char;
+		}
+		if($digits !== '') $numbers[] = intval($digits);
+	}
+	$op_char = $grid[$height - 1][$p['start']];
+	$operation = Operation::tryFrom($op_char);
+	$parsed_problems[] = [
+		'numbers' => $numbers,
+		'operation' => $operation
+	];
 }
 
 $grand_total = 0;
-
-foreach($problems as $idx => $problem) {
-	$ltr = [];
-	/** @var array<int> $problem['stack'] */
-	foreach($problem['stack'] as $entry) {
-		$ltr []= str_split(str_pad($entry, $problem['stack_width'], ' ', STR_PAD_RIGHT));
-	}
-	foreach(range(count($ltr[0])-1, 0) as $col) {
-		$problem['ltr_stack'][] = intval(implode('', array_column($ltr, $col)));
-	}
-	$grand_total += $problem['total'] = $problem['operation']->perform(...$problem['ltr_stack']);
- 	echo 'Part 2: Problem ', $idx + 1, ' (' . $problem['operation']->to_string(...$problem['ltr_stack']) . ') total: ', $problem['total'], PHP_EOL;
+$idx = count($parsed_problems);
+foreach(array_reverse($parsed_problems) as $problem) {
+	$total = $problem['operation']->perform(...$problem['numbers']);
+	$grand_total += $total;
 }
 
 echo 'Part 2: Grand total: ', $grand_total, PHP_EOL;
