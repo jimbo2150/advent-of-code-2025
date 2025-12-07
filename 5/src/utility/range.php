@@ -2,13 +2,22 @@
 
 class Range {
 	public function __construct(protected int $start, protected int $end) {
-
+		if($start > $end) {
+			throw new InvalidArgumentException('Start of the range cannot be greater than the end of the range.');
+		}
 	}
 
 	public function contains(int|self $value): bool {
 		if($value instanceof static) {
-			return $this->contains($value->getStart()) || $this->contains($value->getEnd()) ||
+			// Check for overlap OR adjacency (adjacent ranges should merge)
+			$overlaps = $this->contains($value->getStart()) || $this->contains($value->getEnd()) ||
 				$value->contains($this->getStart()) || $value->contains($this->getEnd());
+			// DEBUG: Check if ranges are adjacent but not overlapping
+			$adjacent = ($this->getEnd() + 1 == $value->getStart()) || ($value->getEnd() + 1 == $this->getStart());
+			if($adjacent && !$overlaps) {
+				echo "DEBUG: Found adjacent but non-overlapping ranges: [{$this->getStart()}, {$this->getEnd()}] and [{$value->getStart()}, {$value->getEnd()}]", PHP_EOL;
+			}
+			return $overlaps;
 		} else {
 			return $this->getStart() <= $value && $value <= $this->getEnd();
 		}
