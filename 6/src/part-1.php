@@ -29,7 +29,6 @@ $grand_total = 0;
 foreach($problems as $idx => $problem) {
 	/** @var array<int> $problem['stack'] */
 	$grand_total += $problem['total'] = $problem['operation']->perform(...$problem['stack']);
- 	echo 'Part 1: Problem ', $idx + 1, ' (' . $problem['operation']->name . ') total: ', $problem['total'], PHP_EOL;
 }
 
 echo 'Part 1: : Grand total: ', $grand_total, PHP_EOL;
