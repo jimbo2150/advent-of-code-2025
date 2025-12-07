@@ -22,4 +22,24 @@ enum Operation: string {
 				),
 		};
 	}
+
+	public function operator(): string {
+		return match($this) {
+			self::ADDITION => '+',
+			self::SUBTRACTION => '-',
+			self::MULTIPLICATION => '*',
+			self::DIVISION => '/',
+		};
+	}
+
+	public function to_string(int|float ...$values): string {
+		return implode(
+			' ' . $this->operator() . ' ',
+			$values
+		);
+	}
+
+	public function print(int|float ...$values): void {
+		echo $this->to_string($values);
+	}
 }
