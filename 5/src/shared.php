@@ -26,6 +26,8 @@ function remerge_ranges(array &$ranges): int {
 				unset($ranges[$idx]);
 			}
 		}
+		// Re-index array to avoid gaps
+		$ranges = array_values($ranges);
 	}
 	return $loops;
 }

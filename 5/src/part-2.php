@@ -36,8 +36,7 @@ while(($row = fgets($GLOBALS['input_file'])) !== false) {
 
 foreach($ranges as $range) {
 	/** @var Range $range */
-	$total_fresh_ingredient_ids += $range->getEnd() - $range->getStart();
+	$total_fresh_ingredient_ids += $range->getEnd() - $range->getStart() + 1;
 }
 
-echo 'Part 2: Total fresh ingredient IDs (current): ', $total_fresh_ingredient_ids, PHP_EOL;
-echo 'Part 2: Total fresh ingredient IDs (with +1): ', $total_with_plus_one, PHP_EOL;
+echo 'Part 2: Total fresh ingredient IDs: ', $total_fresh_ingredient_ids, PHP_EOL;

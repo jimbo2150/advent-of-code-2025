@@ -12,12 +12,8 @@ class Range {
 			// Check for overlap OR adjacency (adjacent ranges should merge)
 			$overlaps = $this->contains($value->getStart()) || $this->contains($value->getEnd()) ||
 				$value->contains($this->getStart()) || $value->contains($this->getEnd());
-			// DEBUG: Check if ranges are adjacent but not overlapping
 			$adjacent = ($this->getEnd() + 1 == $value->getStart()) || ($value->getEnd() + 1 == $this->getStart());
-			if($adjacent && !$overlaps) {
-				echo "DEBUG: Found adjacent but non-overlapping ranges: [{$this->getStart()}, {$this->getEnd()}] and [{$value->getStart()}, {$value->getEnd()}]", PHP_EOL;
-			}
-			return $overlaps;
+			return $overlaps || $adjacent;
 		} else {
 			return $this->getStart() <= $value && $value <= $this->getEnd();
 		}
